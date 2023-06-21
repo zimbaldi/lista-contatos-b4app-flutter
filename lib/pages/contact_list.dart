@@ -73,37 +73,44 @@ class _ContactListState extends State<ContactList> {
                         itemCount: agendaModel.results?.length,
                         itemBuilder: (context, index) {
                           var contactList = agendaModel.results?[index];
-                          return Card(
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ContactDetailPage(
-                                      objctId: contactList.objectId,
-                                      name: contactList.name,
-                                      phoneNumber: contactList.phoneNumber,
-                                      email: contactList.email,
-                                      imagePath: contactList.imagePath,
+                          return Dismissible(
+                            key: UniqueKey(),
+                            onDismissed: (direction) async {
+                              await agendaRepository
+                                  .deleteById(contactList.objectId);
+                            },
+                            child: Card(
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ContactDetailPage(
+                                        objctId: contactList.objectId,
+                                        name: contactList.name,
+                                        phoneNumber: contactList.phoneNumber,
+                                        email: contactList.email,
+                                        imagePath: contactList.imagePath,
+                                      ),
                                     ),
+                                  );
+                                },
+                                //leading: Image.asset(contactList!.imagePath),
+                                leading: CircleAvatar(
+                                  child: Text(
+                                    contactList!.name[0],
                                   ),
-                                );
-                              },
-                              //leading: Image.asset(contactList!.imagePath),
-                              leading: CircleAvatar(
-                                child: Text(
-                                  contactList!.name[0],
                                 ),
-                              ),
-                              title: Text(contactList.name),
-                              //title: Text(contactList!.imagePath),
-                              isThreeLine: true,
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(contactList.phoneNumber),
-                                  Text(contactList.email)
-                                ],
+                                title: Text(contactList.name),
+                                //title: Text(contactList!.imagePath),
+                                isThreeLine: true,
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(contactList.phoneNumber),
+                                    Text(contactList.email)
+                                  ],
+                                ),
                               ),
                             ),
                           );
